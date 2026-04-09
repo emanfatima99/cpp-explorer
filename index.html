@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="C++ Chapter 1 Interactive Explorer — Quiz, Past Papers, Viva Mode, Code Explorer. By Eman Fatima.">
+<title>C++ Explorer — by Eman Fatima</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#07080f;--s1:#0f1018;--s2:#161825;--s3:#1e2035;
+  --border:#252840;--border2:#343660;
+  --purple:#8b7cf8;--purple2:#6c5ce7;--purple3:#a29bfe;
+  --cyan:#00cec9;--cyan2:#81ecec;
+  --pink:#fd79a8;--amber:#fdcb6e;--green:#55efc4;--red:#ff6b6b;
+  --text:#f0f0ff;--muted:#7878a8;--muted2:#5a5a80;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Sora',system-ui,sans-serif;
+  --r:12px;--rl:16px;--rs:8px;
+  --tr:all 0.2s ease;
+  --nav-h:62px;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(139,124,248,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(139,124,248,0.022) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0}
+
+/* PARTICLES */
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.particle{position:absolute;border-radius:50%;animation:floatUp linear infinite;opacity:0}
+@keyframes floatUp{0%{transform:translateY(100vh) rotate(0deg);opacity:0}8%{opacity:0.3}90%{opacity:0.3}100%{transform:translateY(-100px) rotate(720deg);opacity:0}}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:200;background:rgba(7,8,15,0.95);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;
+  height:var(--nav-h);padding:0 20px;gap:12px}
+.nav-brand{display:flex;align-items:center;gap:9px;flex-shrink:0;text-decoration:none}
+.nav-logo{width:32px;height:32px;background:linear-gradient(135deg,var(--purple),var(--cyan));
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.nav-brand-text{}
+.nav-name{font-weight:600;font-size:14px;color:var(--text);line-height:1.2}
+.nav-sub{font-size:10px;color:var(--muted);font-family:var(--mono);line-height:1}
+
+/* Desktop tabs — centered */
+.nav-tabs{display:flex;gap:2px;flex:1;justify-content:center}
+.nav-tab{padding:7px 13px;border-radius:var(--rs);border:none;background:transparent;
+  color:var(--muted);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;
+  transition:var(--tr);white-space:nowrap;flex-shrink:0}
+.nav-tab:hover{color:var(--text);background:var(--s2)}
+.nav-tab.active{background:var(--purple2);color:#fff}
+.nav-by{font-size:11px;color:var(--muted2);font-family:var(--mono);flex-shrink:0;white-space:nowrap}
+.nav-by span{color:var(--purple3)}
+
+/* Mobile bottom nav */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(7,8,15,0.98);border-top:1px solid var(--border);
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+.mobile-nav-inner{display:flex;justify-content:space-around;max-width:480px;margin:0 auto;gap:4px}
+.m-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;
+  border-radius:10px;border:1px solid transparent;background:transparent;color:var(--muted);
+  font-family:var(--sans);font-size:10px;font-weight:500;cursor:pointer;transition:var(--tr);
+  flex:1;min-width:0}
+.m-tab:active{transform:scale(0.94)}
+.m-tab.active{
+  color:var(--purple3);
+  background:rgba(139,124,248,0.12);
+  border-color:rgba(139,124,248,0.3)}
+.m-tab-icon{font-size:20px;line-height:1}
+
+/* MAIN */
+main{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:28px 20px 80px}
+.section{display:none;animation:fadeUp 0.28s ease}
+.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* HERO */
+.hero{text-align:center;padding:56px 16px 44px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 16px;
+  border:1px solid rgba(139,124,248,0.3);border-radius:100px;font-size:11px;
+  color:var(--purple3);font-family:var(--mono);margin-bottom:24px;background:rgba(139,124,248,0.06)}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(85,239,196,0.5)}50%{box-shadow:0 0 0 6px rgba(85,239,196,0)}}
+.hero h1{font-size:clamp(28px,6vw,62px);font-weight:700;line-height:1.1;margin-bottom:16px}
+.g1{background:linear-gradient(135deg,#fff 30%,var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.g2{background:linear-gradient(135deg,var(--cyan),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:15px;color:var(--muted);max-width:520px;margin:0 auto 32px;line-height:1.75;font-weight:300}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-primary{padding:12px 26px;background:var(--purple2);border:none;border-radius:var(--r);
+  color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:var(--tr)}
+.btn-primary:hover{background:var(--purple);transform:translateY(-2px)}
+.btn-secondary{padding:12px 26px;background:transparent;border:1px solid var(--border2);
+  border-radius:var(--r);color:var(--text);font-family:var(--sans);font-size:13px;
+  font-weight:500;cursor:pointer;transition:var(--tr)}
+.btn-secondary:hover{border-color:var(--purple);color:var(--purple3)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:36px}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}
+.stat-num{font-size:26px;font-weight:700;font-family:var(--mono)}
+.stat-num.purple{color:var(--purple3)}.stat-num.cyan{color:var(--cyan2)}
+.stat-num.pink{color:var(--pink)}.stat-num.amber{color:var(--amber)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:4px}
+.best-banner{display:none;align-items:center;justify-content:center;gap:8px;
+  background:rgba(85,239,196,0.06);border:1px solid rgba(85,239,196,0.2);
+  border-radius:var(--r);padding:11px 16px;margin-top:16px;font-size:13px;color:var(--green)}
+.best-banner.show{display:flex}
+
+/* SEC HEADER */
+.sec-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.sec-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.sec-icon.purple{background:rgba(139,124,248,0.12);border:1px solid rgba(139,124,248,0.28)}
+.sec-icon.cyan{background:rgba(0,206,201,0.08);border:1px solid rgba(0,206,201,0.22)}
+.sec-icon.pink{background:rgba(253,121,168,0.08);border:1px solid rgba(253,121,168,0.22)}
+.sec-icon.amber{background:rgba(253,203,110,0.08);border:1px solid rgba(253,203,110,0.22)}
+.sec-title{font-size:20px;font-weight:700}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ── CODE EXPLORER ── */
+.code-explorer{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.code-panel{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.code-topbar{background:var(--s2);padding:11px 15px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--border)}
+.dot-r{width:10px;height:10px;border-radius:50%;background:#ff5f57;flex-shrink:0}
+.dot-y{width:10px;height:10px;border-radius:50%;background:#febc2e;flex-shrink:0}
+.dot-g{width:10px;height:10px;border-radius:50%;background:#28c840;flex-shrink:0}
+.code-filename{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:6px}
+.code-body{padding:18px 16px;font-family:var(--mono);font-size:12.5px;line-height:2;cursor:default;overflow-x:auto}
+.code-line{display:flex;gap:14px;min-width:0}
+.ln{color:var(--muted2);user-select:none;min-width:18px;text-align:right;font-size:10px;padding-top:3px;flex-shrink:0}
+.tok{display:inline;position:relative;cursor:pointer;border-radius:3px;padding:1px 3px;transition:var(--tr)}
+.tok-preprocessor{color:#fd79a8}
+.tok-keyword{color:#74b9ff}.tok-keyword:hover{background:rgba(116,185,255,0.12)}
+.tok-type{color:#a29bfe}.tok-type:hover{background:rgba(162,155,254,0.12)}
+.tok-function{color:#55efc4}.tok-function:hover{background:rgba(85,239,196,0.12)}
+.tok-symbol{color:#fdcb6e}.tok-symbol:hover{background:rgba(253,203,110,0.12)}
+.tok-operator{color:#fd79a8}.tok-operator:hover{background:rgba(253,121,168,0.12)}
+.tok-string{color:#a8ff78}
+.tok-number{color:#fd79a8}
+.tok-comment{color:#546e7a;font-style:italic}
+.tok-namespace{color:#e17055}
+
+/* Tooltip */
+.tt-wrap{position:absolute;z-index:999;pointer-events:none;bottom:calc(100% + 8px);
+  left:50%;transform:translateX(-50%);opacity:0;transition:opacity 0.15s;
+  white-space:nowrap;min-width:200px;max-width:260px}
+.tok:hover .tt-wrap{opacity:1}
+.tt-card{background:var(--s3);border:1px solid var(--border2);border-radius:var(--r);
+  padding:11px 14px;box-shadow:0 10px 36px rgba(0,0,0,0.7);white-space:normal}
+.tt-term{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--purple3);margin-bottom:3px}
+.tt-name{font-size:11px;color:var(--cyan2);font-weight:600;margin-bottom:5px}
+.tt-def{font-size:11px;color:var(--muted);line-height:1.5}
+.tt-arrow{position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:10px;height:5px;overflow:hidden}
+.tt-arrow::after{content:'';position:absolute;width:8px;height:8px;background:var(--s3);border:1px solid var(--border2);transform:rotate(45deg);top:-5px;left:1px}
+
+/* Info panel */
+.info-panel{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);padding:20px;min-height:300px}
+.info-panel-title{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px}
+.info-empty{color:var(--muted2);font-size:13px;line-height:1.7;display:flex;flex-direction:column;align-items:center;justify-content:center;height:240px;text-align:center;gap:8px}
+.info-empty-icon{font-size:30px;opacity:0.3}
+.clicked-card{display:none}
+.clicked-card.show{display:block;animation:fadeUp 0.22s ease}
+.cc-symbol{font-family:var(--mono);font-size:36px;font-weight:700;margin-bottom:8px}
+.cc-sym-purple{color:var(--purple3)}.cc-sym-cyan{color:var(--cyan2)}
+.cc-sym-amber{color:var(--amber)}.cc-sym-pink{color:var(--pink)}.cc-sym-green{color:var(--green)}
+.cc-name{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px}
+.cc-pron{font-size:12px;color:var(--cyan2);font-style:italic;margin-bottom:10px;font-family:var(--mono)}
+.cc-def{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:10px}
+.cc-example{font-size:11px;font-family:var(--mono);background:var(--s2);border-left:3px solid var(--purple);padding:8px 12px;border-radius:0 var(--rs) var(--rs) 0;color:var(--purple3);margin-bottom:12px}
+.cc-category{display:inline-block;font-size:10px;font-family:var(--mono);padding:3px 10px;border-radius:100px}
+.cat-preprocessor{background:rgba(253,121,168,0.12);color:var(--pink)}
+.cat-keyword{background:rgba(116,185,255,0.12);color:#74b9ff}
+.cat-type{background:rgba(162,155,254,0.15);color:var(--purple3)}
+.cat-function{background:rgba(85,239,196,0.12);color:var(--green)}
+.cat-symbol{background:rgba(253,203,110,0.12);color:var(--amber)}
+.cat-operator{background:rgba(253,121,168,0.12);color:var(--pink)}
+.cat-namespace{background:rgba(225,114,85,0.12);color:#e17055}
+.speak-mini{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:6px 14px;
+  background:rgba(139,124,248,0.1);border:1px solid rgba(139,124,248,0.25);border-radius:100px;
+  color:var(--purple3);font-size:11px;font-family:var(--mono);cursor:pointer;transition:var(--tr)}
+.speak-mini:hover{background:rgba(139,124,248,0.2)}
+
+/* ── QUIZ ── */
+.quiz-layout{display:grid;grid-template-columns:1fr 260px;gap:18px;align-items:start}
+.quiz-main-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);padding:26px}
+.quiz-mode-tabs{display:flex;gap:6px;margin-bottom:22px;flex-wrap:wrap}
+.qmode-btn{padding:6px 14px;border-radius:var(--rs);border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-family:var(--sans);font-size:11px;
+  font-weight:500;cursor:pointer;transition:var(--tr)}
+.qmode-btn.active{background:var(--purple2);border-color:var(--purple2);color:#fff}
+.qmode-btn:hover:not(.active){border-color:var(--purple);color:var(--purple3)}
+.timer-ring-wrap{display:flex;justify-content:center;margin-bottom:22px;position:relative}
+.timer-ring-wrap svg{transform:rotate(-90deg)}
+.timer-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:26px;font-weight:700;color:var(--text)}
+.timer-text.urgent{color:var(--pink);animation:tPulse 0.5s infinite}
+@keyframes tPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.1)}}
+.q-counter{font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:8px}
+.q-cat-badge{display:inline-block;font-size:10px;font-family:var(--mono);padding:2px 9px;border-radius:100px;margin-bottom:12px;background:rgba(139,124,248,0.1);color:var(--purple3)}
+.q-text{font-size:17px;font-weight:600;line-height:1.5;margin-bottom:22px;color:var(--text)}
+.q-text code{font-family:var(--mono);color:var(--purple3);background:rgba(162,155,254,0.1);padding:1px 7px;border-radius:4px;font-size:14px}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.opt-btn{padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);
+  color:var(--text);font-family:var(--sans);font-size:12px;cursor:pointer;transition:var(--tr);text-align:left;line-height:1.4}
+.opt-btn:hover:not(:disabled){border-color:var(--purple);background:rgba(139,124,248,0.06)}
+.opt-btn.correct{border-color:var(--green);background:rgba(85,239,196,0.07);color:var(--green)}
+.opt-btn.wrong{border-color:var(--red);background:rgba(255,107,107,0.07);color:var(--red)}
+.opt-btn:disabled{cursor:default;opacity:0.9}
+.feedback-box{padding:12px 16px;border-radius:var(--r);font-size:12px;margin-bottom:16px;line-height:1.65;display:none}
+.feedback-box.show{display:block;animation:fadeUp 0.25s ease}
+.feedback-box.ok{background:rgba(85,239,196,0.06);border:1px solid rgba(85,239,196,0.2);color:var(--green)}
+.feedback-box.bad{background:rgba(255,107,107,0.06);border:1px solid rgba(255,107,107,0.2);color:var(--red)}
+.quiz-next-btn{padding:11px 26px;background:var(--purple2);border:none;border-radius:var(--r);
+  color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:var(--tr);display:none}
+.quiz-next-btn.show{display:inline-block;animation:fadeUp 0.2s ease}
+.quiz-next-btn:hover{background:var(--purple);transform:translateY(-1px)}
+.score-screen{text-align:center;padding:36px 16px}
+.score-big{font-size:68px;font-weight:700;font-family:var(--mono);background:linear-gradient(135deg,var(--cyan),var(--purple3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-msg{font-size:15px;color:var(--muted);margin:12px 0 28px}
+.new-best{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(253,203,110,0.1);border:1px solid rgba(253,203,110,0.28);border-radius:100px;color:var(--amber);font-size:11px;font-family:var(--mono);margin-bottom:18px}
+.concept-feedback{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:20px;text-align:left}
+.cf-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px}
+.cf-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px}
+.cf-label{min-width:100px;color:var(--muted);font-size:11px}
+.cf-bar-wrap{flex:1;height:5px;background:var(--s3);border-radius:3px;overflow:hidden}
+.cf-bar{height:100%;border-radius:3px;transition:width 0.9s ease}
+.cf-bar.strong{background:var(--green)}.cf-bar.medium{background:var(--amber)}.cf-bar.weak{background:var(--red)}
+.cf-pct{font-size:11px;font-family:var(--mono);min-width:34px;text-align:right}
+.cf-pct.strong{color:var(--green)}.cf-pct.medium{color:var(--amber)}.cf-pct.weak{color:var(--red)}
+.score-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.restart-quiz-btn{padding:10px 24px;background:transparent;border:1px solid var(--purple);border-radius:var(--r);color:var(--purple3);font-family:var(--sans);font-size:13px;cursor:pointer;transition:var(--tr)}
+.restart-quiz-btn:hover{background:rgba(139,124,248,0.1)}
+.quiz-sidebar{display:flex;flex-direction:column;gap:10px}
+.sidebar-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);padding:16px}
+.sb-title{font-size:10px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px}
+.progress-dots{display:flex;flex-wrap:wrap;gap:5px}
+.p-dot{width:20px;height:20px;border-radius:5px;background:var(--s3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;font-family:var(--mono);color:var(--muted2);transition:var(--tr)}
+.p-dot.done-ok{background:rgba(85,239,196,0.18);border-color:var(--green);color:var(--green)}
+.p-dot.done-bad{background:rgba(255,107,107,0.18);border-color:var(--red);color:var(--red)}
+.p-dot.current{background:rgba(139,124,248,0.2);border-color:var(--purple);color:var(--purple3);animation:dotP 1.1s infinite}
+@keyframes dotP{0%,100%{border-color:var(--purple)}50%{border-color:var(--purple3)}}
+.live-score-num{font-size:32px;font-weight:700;font-family:var(--mono);color:var(--purple3)}
+.live-score-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.streak-row{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:var(--amber)}
+.best-label{font-size:10px;color:var(--muted2);font-family:var(--mono);margin-top:10px;text-transform:uppercase;letter-spacing:.06em}
+.best-val{font-size:17px;font-weight:600;font-family:var(--mono);color:var(--amber)}
+
+/* ── PAST PAPERS ── */
+.pp-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.pp-filter-btn{padding:6px 13px;border-radius:var(--rs);border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-family:var(--sans);cursor:pointer;transition:var(--tr)}
+.pp-filter-btn.active{background:rgba(253,203,110,0.1);border-color:var(--amber);color:var(--amber)}
+.pp-filter-btn:hover:not(.active){border-color:var(--amber);color:var(--amber)}
+.pp-list{display:flex;flex-direction:column;gap:10px}
+.pp-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;transition:var(--tr)}
+.pp-card:hover{border-color:rgba(253,203,110,0.35)}
+.pp-card-head{padding:16px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;cursor:pointer}
+.pp-q-num{font-family:var(--mono);font-size:9px;color:var(--amber);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+.pp-q-text{font-size:13px;font-weight:500;color:var(--text);line-height:1.55}
+.pp-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.pp-tag{font-size:10px;padding:2px 8px;border-radius:4px;font-family:var(--mono)}
+.pp-tag.year{background:rgba(253,203,110,0.1);color:var(--amber)}
+.pp-tag.topic{background:rgba(139,124,248,0.1);color:var(--purple3)}
+.pp-tag.marks{background:rgba(85,239,196,0.1);color:var(--green)}
+.pp-expand-icon{color:var(--muted);font-size:16px;flex-shrink:0;transition:transform 0.2s;margin-top:2px}
+.pp-card.open .pp-expand-icon{transform:rotate(180deg)}
+.pp-answer{display:none;padding:0 18px 16px;border-top:1px solid var(--border)}
+.pp-card.open .pp-answer{display:block;animation:fadeUp 0.22s ease;padding-top:14px}
+.pp-ans-label{font-size:10px;font-family:var(--mono);color:var(--green);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;justify-content:space-between}
+.pp-copy-btn{padding:3px 10px;border-radius:5px;border:1px solid rgba(85,239,196,0.22);background:transparent;color:var(--green);font-size:10px;font-family:var(--mono);cursor:pointer;transition:var(--tr)}
+.pp-copy-btn:hover{background:rgba(85,239,196,0.1)}
+.pp-ans-text{font-size:12px;color:var(--muted);line-height:1.8}
+.pp-ans-text code{font-family:var(--mono);color:var(--purple3);background:rgba(162,155,254,0.1);padding:1px 5px;border-radius:3px}
+
+/* ── VIVA MODE — complete redesign ── */
+.viva-wrap{max-width:580px;margin:0 auto}
+.viva-top-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}
+.viva-stat{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;text-align:center}
+.vs-num{font-size:22px;font-weight:700;font-family:var(--mono)}
+.vs-num.purple{color:var(--purple3)}.vs-num.green{color:var(--green)}.vs-num.muted{color:var(--muted)}
+.vs-label{font-size:10px;color:var(--muted2);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+.viva-progress{height:3px;background:var(--s2);border-radius:2px;overflow:hidden;margin-bottom:22px}
+.viva-prog-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:2px;transition:width 0.4s ease}
+
+/* Flashcard */
+.flashcard{background:var(--s1);border:1px solid var(--border);border-radius:20px;
+  padding:36px 28px;text-align:center;min-height:280px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;transition:var(--tr);position:relative;margin-bottom:18px}
+.flashcard::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(139,124,248,0.03),rgba(0,206,201,0.03));pointer-events:none;border-radius:20px}
+.flashcard:hover:not(.locked){border-color:rgba(139,124,248,0.5);transform:translateY(-2px)}
+.flashcard.flipped{border-color:var(--cyan);cursor:default}
+.fc-chip{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);
+  padding:3px 10px;border-radius:100px;background:rgba(139,124,248,0.1);color:var(--purple3);margin-bottom:18px}
+.fc-term{font-size:clamp(26px,5vw,46px);font-weight:700;color:var(--purple3);font-family:var(--mono);margin-bottom:6px;line-height:1.1}
+.fc-pron{font-size:13px;color:var(--cyan2);font-style:italic;font-family:var(--mono)}
+.fc-hint{font-size:11px;color:var(--muted2);margin-top:16px;font-family:var(--mono);
+  text-transform:uppercase;letter-spacing:.08em;animation:hintBlink 2s infinite}
+@keyframes hintBlink{0%,100%{opacity:0.5}50%{opacity:1}}
+.fc-answer{display:none}
+.fc-answer.show{display:block;animation:fadeUp 0.28s ease;width:100%;text-align:left;margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.fc-def{font-size:13px;color:var(--text);line-height:1.75;margin-bottom:10px}
+.fc-ex{font-size:11px;font-family:var(--mono);color:var(--purple3);background:var(--s2);
+  padding:7px 12px;border-radius:var(--rs);border-left:3px solid var(--purple)}
+
+/* Viva controls — clean row */
+.viva-controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.v-btn{padding:11px 8px;border-radius:var(--r);border:1px solid;font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;transition:var(--tr);text-align:center;display:flex;align-items:center;justify-content:center;gap:5px}
+.v-btn-skip{background:transparent;border-color:var(--border2);color:var(--muted)}
+.v-btn-skip:hover{border-color:var(--muted);color:var(--text)}
+.v-btn-audio{background:rgba(139,124,248,0.08);border-color:rgba(139,124,248,0.3);color:var(--purple3)}
+.v-btn-audio:hover{background:rgba(139,124,248,0.16)}
+.v-btn-audio.speaking{border-color:var(--green);color:var(--green);background:rgba(85,239,196,0.08)}
+.v-btn-knew{background:rgba(85,239,196,0.08);border-color:rgba(85,239,196,0.3);color:var(--green)}
+.v-btn-knew:hover{background:rgba(85,239,196,0.16)}
+.viva-counter{text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted2)}
+
+/* VOICE BAR */
+.voice-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+  background:rgba(10,11,20,0.97);backdrop-filter:blur(20px);
+  border:1px solid var(--border2);border-radius:100px;padding:9px 20px;
+  display:flex;align-items:center;gap:12px;z-index:190;
+  box-shadow:0 8px 32px rgba(0,0,0,0.6);transition:var(--tr)}
+.vb-dot{width:7px;height:7px;border-radius:50%;background:var(--muted2);transition:var(--tr);flex-shrink:0}
+.vb-dot.on{background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1s infinite}
+.vb-text{font-size:11px;color:var(--muted);font-family:var(--mono);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vb-term{color:var(--purple3);font-weight:600}
+.vb-stop{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:2px 4px;border-radius:4px;transition:var(--tr);flex-shrink:0}
+.vb-stop:hover{color:var(--red)}
+.voice-bar.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(8px)}
+
+/* ── RESPONSIVE MOBILE ── */
+@media(max-width:720px){
+  :root{--nav-h:54px}
+  .nav-tabs{display:none}
+  /* Show "by Eman Fatima" on mobile in top nav */
+  .nav-by{display:flex;font-size:10px;margin-left:auto}
+  .mobile-nav{display:block}
+  main{padding:20px 14px 90px}
+  .hero{padding:36px 10px 30px}
+  .hero h1{font-size:clamp(26px,8vw,40px)}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .code-explorer{grid-template-columns:1fr}
+  .code-body{font-size:11.5px}
+  .quiz-layout{grid-template-columns:1fr}
+  .options-grid{grid-template-columns:1fr}
+  .viva-top-stats{grid-template-columns:repeat(3,1fr)}
+  .viva-controls{grid-template-columns:1fr 1fr 1fr}
+  .flashcard{padding:26px 18px;min-height:240px}
+  .fc-term{font-size:clamp(22px,7vw,36px)}
+  .voice-bar{bottom:72px;left:50%;right:auto;max-width:calc(100vw - 32px)}
+  .quiz-sidebar{display:none}
+}
+@media(max-width:400px){
+  .nav-inner{padding:0 12px;gap:8px}
+  .hero-btns{flex-direction:column;align-items:center}
+  .btn-primary,.btn-secondary{width:100%;justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<!-- DESKTOP NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="nav-logo">C++</div>
+      <div class="nav-brand-text">
+        <div class="nav-name">C++ Explorer</div>
+        <div class="nav-sub">Chapter 1 · Deitel 9e</div>
+      </div>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="goTab('home',this)">Home</button>
+      <button class="nav-tab" onclick="goTab('explorer',this)">Code Explorer</button>
+      <button class="nav-tab" onclick="goTab('quiz',this)">Quiz</button>
+      <button class="nav-tab" onclick="goTab('pastpaper',this)">Past Papers</button>
+      <button class="nav-tab" onclick="goTab('viva',this)">Viva</button>
+    </div>
+    <div class="nav-by">by <span>Eman Fatima</span></div>
+  </div>
+</nav>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <button class="m-tab active" onclick="goMTab('home',this)">
+      <div class="m-tab-icon">🏠</div>Home
+    </button>
+    <button class="m-tab" onclick="goMTab('explorer',this)">
+      <div class="m-tab-icon">⌨️</div>Code
+    </button>
+    <button class="m-tab" onclick="goMTab('quiz',this)">
+      <div class="m-tab-icon">⏱️</div>Quiz
+    </button>
+    <button class="m-tab" onclick="goMTab('pastpaper',this)">
+      <div class="m-tab-icon">📋</div>Papers
+    </button>
+    <button class="m-tab" onclick="goMTab('viva',this)">
+      <div class="m-tab-icon">🎤</div>Viva
+    </button>
+  </div>
+</div>
+
+<main>
+
+<!-- HOME -->
+<div class="section active" id="sec-home">
+  <div class="hero">
+    <div class="hero-badge"><div class="hero-dot"></div>C++ Chapter 1 · Interactive Learning</div>
+    <h1><span class="g1">Master C++</span><br><span class="g2">The Smart Way</span></h1>
+    <p class="hero-sub">Every symbol explained, every concept covered — with quiz, past papers, and viva practice all in one place.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="goTab('explorer',document.querySelectorAll('.nav-tab')[1]);goMTab('explorer',document.querySelectorAll('.m-tab')[1])">Open Code Explorer →</button>
+      <button class="btn-secondary" onclick="goTab('quiz',document.querySelectorAll('.nav-tab')[2]);goMTab('quiz',document.querySelectorAll('.m-tab')[2])">Start Quiz</button>
+    </div>
+    <div class="best-banner" id="homeBestBanner"><span>🏆</span><span>Personal Best: <strong id="homeBestVal"></strong></span></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num purple">40+</div><div class="stat-label">Terms & Symbols</div></div>
+      <div class="stat-card"><div class="stat-num cyan">25</div><div class="stat-label">Quiz Questions</div></div>
+      <div class="stat-card"><div class="stat-num pink">18</div><div class="stat-label">PU Past Papers</div></div>
+      <div class="stat-card"><div class="stat-num amber">30s</div><div class="stat-label">Timer / Question</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CODE EXPLORER -->
+<div class="section" id="sec-explorer">
+  <div class="sec-header">
+    <div class="sec-icon purple">⌨</div>
+    <div><div class="sec-title">3D Code Explorer</div><div class="sec-sub">Hover or click any element to see its full explanation and example</div></div>
+  </div>
+  <div class="code-explorer">
+    <div class="code-panel">
+      <div class="code-topbar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div><span class="code-filename">hello_world.cpp</span></div>
+      <div class="code-body" id="codeBody"></div>
+    </div>
+    <div class="info-panel">
+      <div class="info-panel-title">Element Information</div>
+      <div class="info-empty" id="infoEmpty"><div class="info-empty-icon">👆</div><span>Click any element in the code to see its full explanation</span></div>
+      <div class="clicked-card" id="clickedCard">
+        <div class="cc-symbol" id="ccSymbol"></div>
+        <div class="cc-name" id="ccName"></div>
+        <div class="cc-pron" id="ccPron"></div>
+        <div class="cc-def" id="ccDef"></div>
+        <div class="cc-example" id="ccExample"></div>
+        <span class="cc-category" id="ccCat"></span><br>
+        <button class="speak-mini" onclick="speakCurrentToken()">▶ Play Pronunciation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="sec-quiz">
+  <div class="sec-header">
+    <div class="sec-icon cyan">⏱</div>
+    <div><div class="sec-title">Instant Quiz</div><div class="sec-sub">30-second timer — smart feedback after every answer</div></div>
+  </div>
+  <div class="quiz-layout">
+    <div class="quiz-main-card">
+      <div class="quiz-mode-tabs">
+        <button class="qmode-btn active" onclick="setMode('all',this)">All Topics</button>
+        <button class="qmode-btn" onclick="setMode('symbols',this)">Symbols</button>
+        <button class="qmode-btn" onclick="setMode('concepts',this)">Concepts</button>
+        <button class="qmode-btn" onclick="setMode('oop',this)">OOP</button>
+        <button class="qmode-btn" onclick="setMode('phases',this)">Dev Phases</button>
+      </div>
+      <div id="quizContent"></div>
+    </div>
+    <div class="quiz-sidebar">
+      <div class="sidebar-card"><div class="sb-title">Progress</div><div class="progress-dots" id="progressDots"></div></div>
+      <div class="sidebar-card">
+        <div class="sb-title">Live Score</div>
+        <div class="live-score-num" id="liveScore">0</div>
+        <div class="live-score-sub" id="liveScoreSub">Questions answered: 0</div>
+        <div class="streak-row"><span>🔥</span><span id="streakText">Streak: 0</span></div>
+        <div class="best-label">Personal Best</div>
+        <div class="best-val" id="sidebarBest">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAST PAPERS -->
+<div class="section" id="sec-pastpaper">
+  <div class="sec-header">
+    <div class="sec-icon amber">📋</div>
+    <div><div class="sec-title">Punjab University Past Papers</div><div class="sec-sub">Important repeated questions · Click to reveal model answer</div></div>
+  </div>
+  <div class="pp-filter">
+    <button class="pp-filter-btn active" onclick="filterPP('all',this)">All</button>
+    <button class="pp-filter-btn" onclick="filterPP('definitions',this)">Definitions</button>
+    <button class="pp-filter-btn" onclick="filterPP('concepts',this)">Concepts</button>
+    <button class="pp-filter-btn" onclick="filterPP('short',this)">Short</button>
+    <button class="pp-filter-btn" onclick="filterPP('long',this)">Long</button>
+  </div>
+  <div class="pp-list" id="ppList"></div>
+</div>
+
+<!-- VIVA MODE -->
+<div class="section" id="sec-viva">
+  <div class="sec-header">
+    <div class="sec-icon pink">🎤</div>
+    <div><div class="sec-title">Viva Practice Mode</div><div class="sec-sub">Think of the answer yourself, then reveal and check — audio on demand only</div></div>
+  </div>
+  <div class="viva-wrap">
+    <div class="viva-top-stats">
+      <div class="viva-stat"><div class="vs-num purple" id="vTotalCards">0</div><div class="vs-label">Total</div></div>
+      <div class="viva-stat"><div class="vs-num green" id="vKnewNum">0</div><div class="vs-label">Got It</div></div>
+      <div class="viva-stat"><div class="vs-num muted" id="vSkipNum">0</div><div class="vs-label">Skipped</div></div>
+    </div>
+    <div class="viva-progress"><div class="viva-prog-bar" id="vivaBar" style="width:0%"></div></div>
+    <div class="flashcard" id="flashcard" onclick="revealViva()">
+      <div class="fc-chip" id="fcChip">concept</div>
+      <div class="fc-term" id="fcTerm">—</div>
+      <div class="fc-pron" id="fcPron"></div>
+      <div class="fc-hint" id="fcHint">tap to reveal answer</div>
+      <div class="fc-answer" id="fcAnswer">
+        <div class="fc-def" id="fcDef"></div>
+        <div class="fc-ex" id="fcEx"></div>
+      </div>
+    </div>
+    <div class="viva-controls">
+      <button class="v-btn v-btn-skip" onclick="vivaNext(false)">↓ Skip</button>
+      <button class="v-btn v-btn-audio" id="vAudioBtn" onclick="vivaSpeak()">▶ Audio</button>
+      <button class="v-btn v-btn-knew" onclick="vivaNext(true)">✓ Got it!</button>
+    </div>
+    <div class="viva-counter" id="vivaCounter">Card 1 of 1</div>
+  </div>
+</div>
+
+</main>
+
+<!-- VOICE BAR — only shows when speaking -->
+<div class="voice-bar hidden" id="voiceBar">
+  <div class="vb-dot" id="vbDot"></div>
+  <div class="vb-text">Now speaking: <span class="vb-term" id="vbTerm"></span></div>
+  <button class="vb-stop" onclick="stopSpeech()" title="Stop">✕</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// TOKEN DATA
+// ══════════════════════════════════════════
+const T = {
+  '#include':   {name:'Preprocessor Directive',pron:'hash-in-KLOOD',cat:'preprocessor',
+    def:'Tells the preprocessor to include a standard library file before compilation begins. Runs in Phase 2 of the C++ development cycle.',
+    example:'#include <iostream>  // inserts iostream file',sym:'#include',sc:'cc-sym-pink'},
+  '<iostream>': {name:'Header File — iostream',pron:'eye-oh-STREAM header',cat:'preprocessor',
+    def:'Standard header containing cin, cout, and cerr stream objects. Without this, you cannot print to screen or read keyboard input.',
+    example:'Provides: cout, cin, cerr, endl',sym:'<iostream>',sc:'cc-sym-pink'},
+  'using':      {name:'Using Directive',pron:'YOO-zing',cat:'keyword',
+    def:'Brings an entire namespace into scope so you can write cout instead of std::cout, making code less verbose.',
+    example:'using namespace std;  // direct access to cout',sym:'using',sc:'cc-sym-purple'},
+  'namespace':  {name:'Namespace',pron:'NAYM-spays',cat:'namespace',
+    def:'A named scope that groups related identifiers to prevent naming conflicts. All C++ Standard Library items live in the std namespace.',
+    example:'std::cout  OR  using namespace std;',sym:'namespace',sc:'cc-sym-purple'},
+  'std':        {name:'Standard Namespace',pron:'stee-dee',cat:'namespace',
+    def:'The std namespace contains all C++ Standard Library elements: cout, cin, string, vector, and hundreds more.',
+    example:'std::cout, std::cin, std::string, std::endl',sym:'std',sc:'cc-sym-purple'},
+  'int':        {name:'Integer Data Type',pron:'int',cat:'type',
+    def:'Declares a variable storing whole numbers (no decimals). Typically 4 bytes. Range: -2,147,483,648 to +2,147,483,647.',
+    example:'int age = 20;   int score = -5;',sym:'int',sc:'cc-sym-cyan'},
+  'main':       {name:'Main Function',pron:'mayn',cat:'function',
+    def:'Every C++ program begins execution here. The operating system calls main() to start your program. Must return an int.',
+    example:'int main() { /* code */ return 0; }',sym:'main',sc:'cc-sym-green'},
+  'cout':       {name:'Console Output Stream',pron:'see-OUT',cat:'function',
+    def:'Standard output stream. Sends data to the screen using the insertion operator <<. Part of the std namespace.',
+    example:'cout << "Hello" << endl;',sym:'cout',sc:'cc-sym-green'},
+  'cin':        {name:'Console Input Stream',pron:'see-IN',cat:'function',
+    def:'Standard input stream. Reads data typed by the user on the keyboard using the extraction operator >>.',
+    example:'cin >> name;  // waits for user to type',sym:'cin',sc:'cc-sym-green'},
+  'endl':       {name:'End Line Manipulator',pron:'end-ELL',cat:'function',
+    def:'Outputs a newline character and flushes the output buffer. Moves cursor to next line and ensures text appears immediately.',
+    example:'cout << "Line 1" << endl << "Line 2";',sym:'endl',sc:'cc-sym-green'},
+  'return':     {name:'Return Statement',pron:'re-TURN',cat:'keyword',
+    def:'Exits the current function and sends a value back to the caller. In main(), return 0 signals successful completion to the OS.',
+    example:'return 0;  // 0 = success',sym:'return',sc:'cc-sym-purple'},
+  '{':          {name:'Opening Curly Brace',pron:'opening KURL-ee brace',cat:'symbol',
+    def:'Opens a code block — the body of a function, loop, or conditional. Every opening brace needs a matching closing brace.',
+    example:'int main() {   // opens main body',sym:'{',sc:'cc-sym-amber'},
+  '}':          {name:'Closing Curly Brace',pron:'closing KURL-ee brace',cat:'symbol',
+    def:'Closes a code block. Marks the end of a function body, loop, or condition. Must match every opening brace.',
+    example:'}  // closes main body',sym:'}',sc:'cc-sym-amber'},
+  '(':          {name:'Opening Parenthesis',pron:'opening pa-REN-the-sis',cat:'symbol',
+    def:'Opens a function parameter list, function call, or condition expression.',
+    example:'main()  if(x > 0)  cout << (a + b)',sym:'(',sc:'cc-sym-amber'},
+  ')':          {name:'Closing Parenthesis',pron:'closing pa-REN-the-sis',cat:'symbol',
+    def:'Closes a function parameter list, function call, or condition expression.',
+    example:'main()  — closes the parameter list',sym:')',sc:'cc-sym-amber'},
+  ';':          {name:'Semicolon — Statement Terminator',pron:'SEM-ee-KOH-lon',cat:'symbol',
+    def:'Terminates every C++ statement. Like a period ending a sentence. Missing semicolons are among the most common compile errors.',
+    example:'cout << "Hi";  // semicolon required here',sym:';',sc:'cc-sym-pink'},
+  '<<':         {name:'Insertion Operator',pron:'insertion op-er-AY-tor',cat:'operator',
+    def:'Used with cout to insert (send) data into the output stream. Can be chained multiple times in one statement.',
+    example:'cout << "Name: " << name << endl;',sym:'<<',sc:'cc-sym-amber'},
+  '>>':         {name:'Extraction Operator',pron:'extraction op-er-AY-tor',cat:'operator',
+    def:'Used with cin to extract (receive) data from the input stream and store it in a variable.',
+    example:'cin >> age >> name;  // reads two values',sym:'>>',sc:'cc-sym-amber'},
+  '::':         {name:'Scope Resolution Operator',pron:'scope rez-oh-LOO-shun',cat:'operator',
+    def:'Specifies which namespace or class a name belongs to. std::cout means "the cout object from the std namespace".',
+    example:'std::cout  std::string  std::endl',sym:'::',sc:'cc-sym-amber'},
+};
+
+let currentToken = null;
+
+function tok(display, key) {
+  const k = key || display;
+  const d = T[k];
+  if (!d) return `<span class="tok-comment">${display}</span>`;
+  return `<span class="tok tok-${d.cat}"
+    onclick="showInfo('${k}')"
+    onmouseenter="hoverToken('${k}')"
+    tabindex="0"
+    onkeydown="if(event.key==='Enter')showInfo('${k}')"
+    >${display}<span class="tt-wrap"><div class="tt-card">
+      <div class="tt-term">${display}</div>
+      <div class="tt-name">${d.name}</div>
+      <div class="tt-def">${d.def.substring(0,85)}...</div>
+    </div><div class="tt-arrow"></div></span></span>`;
+}
+
+function buildCode() {
+  const lines = [
+    [tok('#include'),' ',tok('<iostream>')],
+    [''],
+    [tok('using'),' ',tok('namespace'),' ',tok('std'),tok(';')],
+    [''],
+    [tok('int'),' ',tok('main'),tok('('),tok(')'),' ',tok('{')],
+    ['    ',tok('cout'),' ',tok('<<'),' ','<span class="tok-string">"Hello, C++ World!"</span>',' ',tok('<<'),' ',tok('endl'),tok(';')],
+    ['    ','<span class="tok-type">string</span>',' <span class="tok-comment">name</span>',tok(';')],
+    ['    ',tok('cin'),' ',tok('>>'),' <span class="tok-comment">name</span>',tok(';')],
+    ['    ',tok('return'),' <span class="tok-number">0</span>',tok(';')],
+    [tok('}')],
+  ];
+  document.getElementById('codeBody').innerHTML = lines.map((p,i) =>
+    `<div class="code-line"><span class="ln">${i+1}</span><span>${p.join('')}</span></div>`
+  ).join('');
+}
+
+function hoverToken(key) {
+  currentToken = key;
+  const d = T[key]; if (!d) return;
+  document.getElementById('vbTerm').textContent = d.name;
+}
+
+function showInfo(key) {
+  currentToken = key;
+  const d = T[key]; if (!d) return;
+  document.getElementById('infoEmpty').style.display = 'none';
+  const cc = document.getElementById('clickedCard');
+  cc.classList.add('show');
+  document.getElementById('ccSymbol').className = `cc-symbol ${d.sc}`;
+  document.getElementById('ccSymbol').textContent = d.sym;
+  document.getElementById('ccName').textContent = d.name;
+  document.getElementById('ccPron').textContent = '/' + d.pron + '/';
+  document.getElementById('ccDef').textContent = d.def;
+  document.getElementById('ccExample').textContent = d.example;
+  const catEl = document.getElementById('ccCat');
+  catEl.textContent = d.cat;
+  catEl.className = `cc-category cat-${d.cat}`;
+}
+
+function speakCurrentToken() {
+  if (!currentToken) return;
+  const d = T[currentToken]; if (!d) return;
+  speak(`${d.name}. Pronounced: ${d.pron}. ${d.def}`);
+}
+
+// ══════════════════════════════════════════
+// QUIZ DATA
+// ══════════════════════════════════════════
+const QUIZ = [
+  {q:'What does the semicolon <code>;</code> do in C++?',cat:'symbols',correct:0,
+    opts:['Terminates every statement','Starts a comment','Opens a code block','Declares a variable'],
+    exp:'The semicolon is the statement terminator — every C++ statement must end with ; — forgetting it is one of the most common compile errors.'},
+  {q:'<code>cout</code> is pronounced as?',cat:'symbols',correct:0,
+    opts:['"see-out" — standard output','"cut" — cuts string','"count" — counts items','"c-out" — compiler output'],
+    exp:'cout = "see-out". Console OUTput stream. It sends data to the screen.'},
+  {q:'<code>cin</code> is pronounced as?',cat:'symbols',correct:1,
+    opts:['"sin" — sine function','"see-in" — reads keyboard','"chin" — outputs text','"scene" — shows output'],
+    exp:'cin = "see-in". Console INput stream. Reads data typed by the user.'},
+  {q:'What does <code>#include</code> do?',cat:'symbols',correct:0,
+    opts:['Preprocessor directive — inserts a file before compile','Compiles source file','Links object code','Declares a variable'],
+    exp:'#include is a preprocessor directive. It inserts header file contents into your program before compilation (Phase 2).'},
+  {q:'What is <code>::</code> called?',cat:'symbols',correct:2,
+    opts:['Double comment marker','Namespace creator','Scope Resolution Operator','Class separator'],
+    exp:':: is the Scope Resolution Operator. std::cout means "cout from the std namespace".'},
+  {q:'What does <code><<</code> do with cout?',cat:'symbols',correct:0,
+    opts:['Insertion operator — sends data to output stream','Less than or equal','Bit-shift left','Starts a string'],
+    exp:'<< is the insertion operator. It inserts data into the cout output stream, displaying it on screen.'},
+  {q:'What does <code>>></code> do with cin?',cat:'symbols',correct:1,
+    opts:['Greater than or equal','Extraction operator — reads from input stream','Bit-shift right','Ends a stream'],
+    exp:'>> is the extraction operator. It extracts data from the cin input stream into a variable.'},
+  {q:'What does <code>{</code> mean in C++?',cat:'symbols',correct:0,
+    opts:['Opening brace — starts a code block','Closes a function','Starts a comment','Ends a class'],
+    exp:'Curly braces {} define code blocks. { opens, } closes. Every function body is wrapped in {}.'},
+  {q:'What does <code>return 0;</code> mean in main()?',cat:'symbols',correct:3,
+    opts:['Returns 0 to cout','Restarts the program','Clears the screen','Exits main — signals success to the OS'],
+    exp:'return 0 tells the OS the program finished successfully. Any non-zero value signals an error.'},
+  {q:'What does <code>endl</code> do?',cat:'symbols',correct:2,
+    opts:['Ends the program','Closes a file','Outputs newline and flushes output buffer','Terminates a function'],
+    exp:'endl outputs a newline AND flushes the buffer, ensuring text appears on screen immediately.'},
+  {q:'A Compiler does what?',cat:'concepts',correct:1,
+    opts:['Runs code line by line','Translates entire program to machine code before running','Links object files','Loads program into RAM'],
+    exp:'A compiler translates the ENTIRE source code into machine code before any execution begins. C++ is a compiled language.'},
+  {q:'Who created C++ and where?',cat:'concepts',correct:0,
+    opts:['Bjarne Stroustrup — Bell Labs — early 1980s','Dennis Ritchie — MIT — 1972','James Gosling — Sun — 1991','Guido van Rossum — CWI — 1991'],
+    exp:'Bjarne Stroustrup developed C++ at Bell Laboratories in the early 1980s, extending C with OOP features.'},
+  {q:'What is a Runtime Error?',cat:'concepts',correct:1,
+    opts:['Error caught by compiler before running','Error that occurs while the program is executing','Mistake in program design','Error inside a #include'],
+    exp:'Runtime errors occur DURING execution, after successful compilation. Fatal ones crash the program immediately.'},
+  {q:"What is Moore's Law?",cat:'concepts',correct:0,
+    opts:['Computer capacities roughly double every 1-2 years','Source code size doubles yearly','RAM prices halve monthly','CPU speed is constant'],
+    exp:"Moore's Law: computer capacities approximately double every 1-2 years inexpensively. Identified by Gordon Moore (Intel co-founder)."},
+  {q:'What are the 6 logical units of a computer?',cat:'concepts',correct:0,
+    opts:['Input, Output, Memory (RAM), CPU, ALU, Secondary Storage','Keyboard, Screen, RAM, ROM, GPU, USB','Processor, Cache, Bus, Register, Clock, Power','Edit, Compile, Link, Load, Run, Debug'],
+    exp:'The 6 logical units: Input Unit, Output Unit, Memory Unit (RAM), CPU, ALU (Arithmetic & Logic Unit), Secondary Storage.'},
+  {q:'What is RAM in the 6 logical units?',cat:'concepts',correct:2,
+    opts:['Secondary Storage — permanent','Output Unit — sends to screen','Memory Unit — fast, volatile, lost on power off','ALU — does arithmetic'],
+    exp:'RAM is the Memory Unit. Fast but volatile — all data is LOST when the computer is turned off.'},
+  {q:'What is Encapsulation in OOP?',cat:'oop',correct:2,
+    opts:['Copying a class','Creating multiple objects','Hiding implementation details inside objects','Using multiple files'],
+    exp:'Encapsulation bundles data and functions inside a class and hides internal implementation details from outside.'},
+  {q:'What is Inheritance in OOP?',cat:'oop',correct:0,
+    opts:['New class absorbs traits of an existing class','Hiding data inside object','Creating multiple objects','Running code in parallel'],
+    exp:'Inheritance allows a derived class to reuse code from a base class. A Convertible is-a more specific type of Car.'},
+  {q:'OOP stands for?',cat:'oop',correct:0,
+    opts:['Object-Oriented Programming','Ordered Output Program','Open Operation Process','Optional Object Paradigm'],
+    exp:'OOP = Object-Oriented Programming. It uses classes and objects to model real-world entities.'},
+  {q:'What does UML stand for?',cat:'oop',correct:2,
+    opts:['Universal Machine Language','User Mode Layout','Unified Modeling Language','Utility Management Library'],
+    exp:'UML = Unified Modeling Language. Industry-standard graphical language for communicating OOP design.'},
+  {q:'What happens in Phase 2 of C++ development?',cat:'phases',correct:1,
+    opts:['Compile — source to object code','Preprocess — executes #directives','Link — combines files','Load — to RAM'],
+    exp:'Phase 2 is Preprocessing. The preprocessor executes # directives like #include before compilation begins.'},
+  {q:'What does the Linker do (Phase 4)?',cat:'phases',correct:0,
+    opts:['Combines object code with library code to make executable','Translates source to machine code','Runs the program','Checks syntax'],
+    exp:'The Linker (Phase 4) combines your compiled object code with C++ Standard Library code to produce the final executable.'},
+  {q:'What is the 6th and final phase of C++ development?',cat:'phases',correct:1,
+    opts:['Link — combines code','Execute — CPU runs instructions one by one','Load — into RAM','Edit — write source code'],
+    exp:'Phase 6 is Execute. The CPU runs the program instruction by instruction. Runtime errors can occur here.'},
+  {q:'What is Phase 5 (Load) in C++ development?',cat:'phases',correct:2,
+    opts:['Translating source to object code','Combining object code with libraries','Loader transfers executable from disk to RAM','CPU executes instructions'],
+    exp:'Phase 5 is Loading. The Loader copies the executable from secondary storage into RAM so the CPU can run it.'},
+  {q:'What is the difference between Hardware and Software?',cat:'concepts',correct:0,
+    opts:['Hardware = physical devices; Software = programs','Hardware = programs; Software = devices','Both are the same','Hardware is always faster'],
+    exp:'Hardware = physical components (CPU, RAM, keyboard). Software = programs and instructions that run on hardware.'},
+];
+
+// ══════════════════════════════════════════
+// QUIZ ENGINE
+// ══════════════════════════════════════════
+let qIdx=0,qScore=0,qAnswered=false,qTimer=null,qTime=30,qMode='all',qStreak=0;
+let qPool=[],qResults=[];
+const catScores={symbols:{c:0,t:0},concepts:{c:0,t:0},oop:{c:0,t:0},phases:{c:0,t:0}};
+
+const shuffle = a => [...a].sort(()=>Math.random()-0.5);
+
+function getBest(){try{return parseInt(localStorage.getItem('cpp_best')||'0')}catch{return 0}}
+function saveBest(s){try{localStorage.setItem('cpp_best',Math.max(s,getBest()).toString())}catch{}}
+function updateBestUI(){
+  const b=getBest();
+  const sb=document.getElementById('sidebarBest');
+  if(sb)sb.textContent=b>0?b+' pts':'—';
+  const bn=document.getElementById('homeBestBanner'),bv=document.getElementById('homeBestVal');
+  if(b>0&&bn&&bv){bv.textContent=b+'/'+QUIZ.length;bn.classList.add('show')}
+}
+
+function setMode(mode,btn){
+  qMode=mode;
+  document.querySelectorAll('.qmode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  startQuiz();
+}
+function startQuiz(){
+  const filtered=qMode==='all'?QUIZ:QUIZ.filter(q=>q.cat===qMode);
+  qPool=shuffle(filtered);
+  qIdx=0;qScore=0;qStreak=0;qAnswered=false;qResults=[];
+  Object.keys(catScores).forEach(k=>{catScores[k].c=0;catScores[k].t=0});
+  buildProgressDots();
+  updateBestUI();
+  showQuestion();
+}
+function buildProgressDots(){
+  document.getElementById('progressDots').innerHTML=qPool.map((_,i)=>
+    `<div class="p-dot" id="dot-${i}">${i+1}</div>`).join('');
+}
+function showQuestion(){
+  if(qIdx>=qPool.length){showScoreScreen();return}
+  qAnswered=false;clearInterval(qTimer);qTime=30;
+  const q=qPool[qIdx];
+  document.getElementById('dot-'+qIdx)?.classList.add('current');
+  document.getElementById('liveScore').textContent=qScore;
+  document.getElementById('liveScoreSub').textContent=`Questions answered: ${qIdx}`;
+  document.getElementById('streakText').textContent=`Streak: ${qStreak}`;
+  if(!catScores[q.cat])catScores[q.cat]={c:0,t:0};
+  catScores[q.cat].t++;
+  const idxs=shuffle([0,1,2,3].slice(0,q.opts.length));
+  const optBtns=idxs.map(i=>
+    `<button class="opt-btn" data-idx="${i}" onclick="answerQ(${i})">${q.opts[i]}</button>`).join('');
+  const perim=(2*Math.PI*39).toFixed(1);
+  document.getElementById('quizContent').innerHTML=`
+    <div class="timer-ring-wrap">
+      <svg width="90" height="90" viewBox="0 0 90 90">
+        <circle cx="45" cy="45" r="39" fill="none" stroke="#1e2035" stroke-width="6"/>
+        <circle id="timerCircle" cx="45" cy="45" r="39" fill="none" stroke="#8b7cf8"
+          stroke-width="6" stroke-dasharray="${perim}" stroke-dashoffset="0" stroke-linecap="round"/>
+      </svg>
+      <div class="timer-text" id="timerNum">30</div>
+    </div>
+    <div class="q-counter">Question ${qIdx+1} of ${qPool.length}</div>
+    <div class="q-cat-badge">${q.cat}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options-grid">${optBtns}</div>
+    <div class="feedback-box" id="fb"></div>
+    <button class="quiz-next-btn" id="nextQBtn" onclick="nextQ()" style="display:none">Next →</button>`;
+  startTimer();
+}
+function startTimer(){
+  const perim=2*Math.PI*39;
+  qTimer=setInterval(()=>{
+    qTime--;
+    const c=document.getElementById('timerCircle'),n=document.getElementById('timerNum');
+    if(c)c.style.strokeDashoffset=((1-qTime/30)*perim).toFixed(1);
+    if(n){n.textContent=qTime;n.className=qTime<=5?'timer-text urgent':'timer-text'}
+    if(qTime<=0){clearInterval(qTimer);timeUp()}
+  },1000);
+}
+function timeUp(){
+  if(qAnswered)return;qAnswered=true;qStreak=0;
+  const q=qPool[qIdx];
+  document.querySelectorAll('.opt-btn').forEach(b=>{b.disabled=true;if(+b.dataset.idx===q.correct)b.classList.add('correct')});
+  const fb=document.getElementById('fb');
+  fb.textContent=`⏱ Time up! Correct answer: "${q.opts[q.correct]}" — ${q.exp}`;
+  fb.className='feedback-box show bad';
+  document.getElementById('nextQBtn').style.display='inline-block';
+  qResults.push(false);
+  const dot=document.getElementById('dot-'+qIdx);
+  if(dot){dot.classList.remove('current');dot.classList.add('done-bad')}
+}
+function answerQ(chosenIdx){
+  if(qAnswered)return;qAnswered=true;clearInterval(qTimer);
+  const q=qPool[qIdx];const ok=chosenIdx===q.correct;
+  if(ok){qScore++;qStreak++;catScores[q.cat].c++}else{qStreak=0}
+  document.querySelectorAll('.opt-btn').forEach(b=>{
+    const i=+b.dataset.idx;b.disabled=true;
+    if(i===q.correct)b.classList.add('correct');
+    else if(i===chosenIdx&&!ok)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('fb');
+  fb.textContent=ok?`✓ Correct! ${q.exp}`:`✗ Incorrect. Correct answer: "${q.opts[q.correct]}" — ${q.exp}`;
+  fb.className='feedback-box show '+(ok?'ok':'bad');
+  document.getElementById('nextQBtn').style.display='inline-block';
+  document.getElementById('liveScore').textContent=qScore;
+  document.getElementById('streakText').textContent=`Streak: ${qStreak}`;
+  qResults.push(ok);
+  const dot=document.getElementById('dot-'+qIdx);
+  if(dot){dot.classList.remove('current');dot.classList.add(ok?'done-ok':'done-bad')}
+}
+function nextQ(){qIdx++;showQuestion()}
+function showScoreScreen(){
+  clearInterval(qTimer);saveBest(qScore);
+  const pct=Math.round((qScore/qPool.length)*100);
+  const isNew=qScore>=getBest()&&qScore>0;
+  const msg=pct>=80?'Excellent! You are ready for the exam!':pct>=50?'Good progress — a bit more practice will get you there.':'Keep going — every attempt makes you stronger!';
+  const rows=Object.entries(catScores).filter(([,v])=>v.t>0).map(([cat,v])=>{
+    const p=Math.round((v.c/v.t)*100),cls=p>=70?'strong':p>=40?'medium':'weak';
+    return `<div class="cf-row"><div class="cf-label">${cat}</div>
+      <div class="cf-bar-wrap"><div class="cf-bar ${cls}" style="width:${p}%"></div></div>
+      <div class="cf-pct ${cls}">${p}%</div></div>`;
+  }).join('');
+  document.getElementById('quizContent').innerHTML=`
+    <div class="score-screen">
+      <div class="score-big">${qScore}/${qPool.length}</div>
+      ${isNew?'<div class="new-best">🏆 New Personal Best!</div>':''}
+      <div class="score-msg">${pct}% — ${msg}</div>
+      <div class="concept-feedback"><div class="cf-title">Topic Breakdown</div>${rows}</div>
+      <div class="score-actions">
+        <button class="restart-quiz-btn" onclick="startQuiz()">↺ Retry</button>
+        <button class="btn-primary" onclick="goTab('pastpaper',document.querySelectorAll('.nav-tab')[3])">Past Papers</button>
+      </div>
+    </div>`;
+  updateBestUI();
+}
+
+// ══════════════════════════════════════════
+// PAST PAPERS
+// ══════════════════════════════════════════
+const PP=[
+  {q:'Define Hardware and Software with examples.',type:'definitions',years:['2019','2021','2023'],marks:5,topic:'basics',
+    ans:'Hardware refers to the physical components of a computer system (keyboard, mouse, CPU, RAM, hard drive). Software refers to programs and instructions that run on the hardware.\n\nExamples — Hardware: CPU, RAM, keyboard. Software: C++ program, Windows OS, web browser.'},
+  {q:'What is a Compiler? How does it differ from an Interpreter?',type:'definitions',years:['2018','2020','2022'],marks:5,topic:'languages',
+    ans:'A Compiler translates the ENTIRE high-level program into machine code before execution. An Interpreter translates and executes one line at a time.\n\nDifference: Compiler is faster at runtime; interpreter is easier to debug. C++ uses a compiler; Python uses an interpreter.'},
+  {q:'Explain the six phases of the C++ development environment.',type:'long',years:['2019','2020','2022','2023'],marks:10,topic:'phases',
+    ans:'Phase 1 — Edit: Write source code (.cpp file) in an editor or IDE.\nPhase 2 — Preprocess: Preprocessor runs # directives like #include and #define.\nPhase 3 — Compile: Compiler translates source code into object code (machine language).\nPhase 4 — Link: Linker combines object code with Standard Library code to make an executable.\nPhase 5 — Load: Loader transfers the executable from disk into RAM.\nPhase 6 — Execute: CPU runs the program instruction by instruction.'},
+  {q:'What are the six logical units of a computer? Explain each.',type:'long',years:['2018','2021','2023'],marks:10,topic:'basics',
+    ans:'1. Input Unit: Receives data from devices like keyboard, mouse, scanner.\n2. Output Unit: Sends processed data to screen, printer, speakers.\n3. Memory Unit (RAM): Fast, volatile storage for data being processed. Lost on power off.\n4. CPU: Controls all other units. Executes billions of instructions per second.\n5. ALU: Performs arithmetic (+, -, ×, ÷) and logical comparisons.\n6. Secondary Storage: Persistent storage (hard drive, USB). Data survives power off.'},
+  {q:'What is Object-Oriented Programming (OOP)? Explain with the car analogy.',type:'long',years:['2019','2020','2021'],marks:10,topic:'oop',
+    ans:'OOP is a programming methodology using classes and objects to model real-world entities.\n\nCar Analogy:\n• Class = engineering blueprint of a car\n• Object = an actual car built from the blueprint\n• Member Function = accelerator pedal (hides engine complexity)\n• Data Members = color, fuel level, odometer\n• Encapsulation = car hides engine internals from the driver\n• Inheritance = Convertible is-a more specialized kind of Car\n• Messages = pressing the gas pedal calls a member function'},
+  {q:'Define: (a) Bit (b) Byte (c) Field (d) Record (e) Database',type:'definitions',years:['2019','2022'],marks:5,topic:'data',
+    ans:'(a) Bit: Smallest unit of data — binary digit, can only be 0 or 1.\n(b) Byte/Character: 8 bits, represents one letter, digit, or symbol.\n(c) Field: Group of related bytes with meaning, e.g., a person\'s name.\n(d) Record: Group of related fields, e.g., employee ID, name, and address.\n(e) Database: Organized electronic collection of data in relational tables.'},
+  {q:"What is Moore's Law? Who proposed it?",type:'short',years:['2020','2022','2023'],marks:3,topic:'basics',
+    ans:"Moore's Law was identified by Gordon Moore (co-founder of Intel) in the 1960s. It states that computer capacities approximately double every 1-2 years inexpensively. This drives the Information Revolution."},
+  {q:'Differentiate between Machine Language, Assembly Language, and High-Level Language.',type:'definitions',years:['2018','2021','2023'],marks:6,topic:'languages',
+    ans:'Machine Language: Binary (0s and 1s) directly understood by CPU. Architecture-specific.\nAssembly Language: English-like abbreviations (mnemonics). Requires assembler to translate.\nHigh-Level Language: English-like syntax (C++, Java). One statement = many machine instructions. Requires compiler or interpreter.'},
+  {q:'What are the Standard I/O Streams in C++?',type:'short',years:['2019','2020','2021','2022','2023'],marks:3,topic:'basics',
+    ans:'Three standard I/O streams in C++:\n1. cin ("see-in"): Standard input — reads from keyboard.\n2. cout ("see-out"): Standard output — writes to screen.\n3. cerr ("see-err"): Standard error — displays error messages, unbuffered.'},
+  {q:'What is Encapsulation? Why is it important?',type:'definitions',years:['2020','2022'],marks:4,topic:'oop',
+    ans:'Encapsulation bundles data (attributes) and functions (member functions) inside a class and hides implementation details from outside.\n\nImportance: (1) Protects data from unintended modification. (2) Simplifies the public interface. (3) Makes code easier to maintain.\n\nExample: A car hides its engine complexity — the driver only uses pedals.'},
+  {q:'What is UML? Where is it used?',type:'short',years:['2021','2023'],marks:3,topic:'oop',
+    ans:'UML = Unified Modeling Language. Industry-standard graphical language for communicating Object-Oriented Analysis and Design.\n\nUsed for: class diagrams, sequence diagrams, system architecture. Applied throughout software engineering to plan designs before coding.'},
+  {q:'What is a Runtime Error? Give an example.',type:'short',years:['2019','2021','2023'],marks:3,topic:'basics',
+    ans:'A Runtime Error occurs during execution, after successful compilation.\n\nFatal errors immediately terminate the program. Non-fatal errors allow completion but produce wrong results.\n\nExample: Division by zero — int x = 5 / 0; — causes a fatal runtime error.'},
+  {q:'Who created C++ and when?',type:'short',years:['2018','2020'],marks:4,topic:'basics',
+    ans:'C++ was created by Bjarne Stroustrup at Bell Laboratories in the early 1980s. It extended C by adding Object-Oriented Programming features: classes, objects, inheritance, and encapsulation.'},
+  {q:'Write a C++ program to display "Hello World" and explain each part.',type:'long',years:['2018','2019','2020','2021','2022','2023'],marks:8,topic:'basics',
+    ans:'#include <iostream>    // includes I/O library\nusing namespace std;  // brings std namespace into scope\n\nint main() {          // program starts here\n    cout << "Hello World!" << endl;  // output to screen\n    return 0;         // 0 = success\n}'},
+  {q:'What is Inheritance? Give an example.',type:'definitions',years:['2021','2022','2023'],marks:4,topic:'oop',
+    ans:'Inheritance allows a derived class to absorb all characteristics of a base class and add its own. It promotes code reuse.\n\nExample: Convertible inherits all Car features (engine, wheels) and adds a retractable roof.\n\nIn C++: class Convertible : public Car { };'},
+  {q:'Difference between a compiler and interpreter for C++?',type:'short',years:['2018','2022'],marks:4,topic:'languages',
+    ans:'Compiler (used by C++): Translates entire program to machine code before execution. Faster runtime. All errors shown after full compilation.\n\nInterpreter: Translates and executes one line at a time. Easier debugging. Slower at runtime.\n\nC++ is a compiled language.'},
+  {q:'What is a Preprocessor Directive? Give two examples.',type:'short',years:['2019','2020','2022'],marks:3,topic:'basics',
+    ans:'A Preprocessor Directive starts with # and is processed BEFORE compilation (Phase 2).\n\n1. #include <iostream> — inserts the iostream header file\n2. #define PI 3.14159  — creates a named constant\n\nThe preprocessor handles all # lines before the compiler sees the code.'},
+  {q:'What is Secondary Storage? How does it differ from RAM?',type:'definitions',years:['2020','2023'],marks:4,topic:'basics',
+    ans:'Secondary Storage: Persistent, non-volatile, high-capacity (hard drives, SSDs, USB drives). Data survives power off.\n\nRAM: Fast, volatile, low-capacity. Data LOST when power is removed.\n\nSummary: RAM = fast temporary working memory; Secondary Storage = permanent long-term storage.'},
+];
+
+function renderPP(filter){
+  const items=filter==='all'?PP:PP.filter(p=>p.type===filter);
+  window._ppItems=items;
+  document.getElementById('ppList').innerHTML=items.map((p,i)=>`
+    <div class="pp-card" id="ppc-${i}">
+      <div class="pp-card-head" onclick="togglePP(${i})">
+        <div>
+          <div class="pp-q-num">PU Examination Question</div>
+          <div class="pp-q-text">${p.q}</div>
+          <div class="pp-tags">
+            ${p.years.map(y=>`<span class="pp-tag year">${y}</span>`).join('')}
+            <span class="pp-tag topic">${p.topic}</span>
+            <span class="pp-tag marks">${p.marks} marks</span>
+          </div>
+        </div>
+        <div class="pp-expand-icon">⌄</div>
+      </div>
+      <div class="pp-answer">
+        <div class="pp-ans-label">
+          <span>Model Answer</span>
+          <button class="pp-copy-btn" onclick="copyAns(${i},event)">Copy</button>
+        </div>
+        <div class="pp-ans-text">${p.ans.replace(/\n/g,'<br>').replace(/`([^`]+)`/g,'<code>$1</code>')}</div>
+      </div>
+    </div>`).join('');
+}
+function togglePP(i){document.getElementById('ppc-'+i).classList.toggle('open')}
+function copyAns(i,e){
+  e.stopPropagation();
+  const text=(window._ppItems||PP)[i].ans;
+  navigator.clipboard?.writeText(text).then(()=>{
+    const b=e.target;b.textContent='Copied!';
+    setTimeout(()=>b.textContent='Copy',2000);
+  });
+}
+function filterPP(f,btn){
+  document.querySelectorAll('.pp-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderPP(f);
+}
+
+// ══════════════════════════════════════════
+// VIVA DATA — extended with conceptual questions
+// ══════════════════════════════════════════
+const VIVA = [
+  // From token dictionary
+  ...Object.entries(T).map(([k,v])=>({term:k,name:v.name,pron:v.pron,cat:v.cat,def:v.def,example:v.example})),
+  // Conceptual cards
+  {term:'Compiler',name:'Compiler',pron:'com-PIE-ler',cat:'concept',
+    def:'Translates the entire high-level source program into machine code before execution. C++ uses a compiler.',
+    example:'Phase 3 of C++ development cycle'},
+  {term:'Interpreter',name:'Interpreter',pron:'in-TER-preh-ter',cat:'concept',
+    def:'Translates and executes a program one line at a time. Easier to debug but slower than a compiler at runtime.',
+    example:'Python, JavaScript use interpreters'},
+  {term:'RAM',name:'Random Access Memory',pron:'ram',cat:'concept',
+    def:'Fast, volatile primary memory. Holds the currently running program. All data lost when power is off.',
+    example:'Logical unit: Memory Unit'},
+  {term:'CPU',name:'Central Processing Unit',pron:'see-pee-you',cat:'concept',
+    def:'Controls all other units. Executes billions of instructions per second. The brain of the computer.',
+    example:'One of the 6 logical units'},
+  {term:'ALU',name:'Arithmetic and Logic Unit',pron:'ay-el-you',cat:'concept',
+    def:'Performs all arithmetic operations (+, -, ×, ÷) and logical comparisons (>, <, ==). Part of the CPU.',
+    example:'5 + 3 = 8, x > y returns true/false'},
+  {term:'Secondary Storage',name:'Secondary Storage',pron:'SEK-on-dair-ee STOR-ij',cat:'concept',
+    def:'Non-volatile, persistent, high-capacity storage. Data survives power off. Much slower than RAM.',
+    example:'Hard drive, SSD, USB drive, CD-ROM'},
+  {term:'OOP',name:'Object-Oriented Programming',pron:'oh-oh-pee',cat:'concept',
+    def:'Programming methodology using classes and objects to model real-world entities. Features: encapsulation, inheritance, polymorphism.',
+    example:'class Car { color; speed; accelerate(); };'},
+  {term:'Encapsulation',name:'Encapsulation',pron:'en-kap-syoo-LAY-shun',cat:'concept',
+    def:'Bundling data and functions inside a class and hiding implementation details from outside code.',
+    example:'Car hides engine — driver only uses pedals'},
+  {term:'Inheritance',name:'Inheritance',pron:'in-HAIR-it-ans',cat:'concept',
+    def:'A derived class absorbs all characteristics of a base class and can add its own. Promotes code reuse.',
+    example:'class Convertible : public Car { };'},
+  {term:'Preprocessor',name:'Preprocessor',pron:'pree-PRO-ses-or',cat:'concept',
+    def:'Runs before compilation (Phase 2). Executes # directives like #include and #define.',
+    example:'#include <iostream> → inserts file contents'},
+  {term:'Linker',name:'Linker',pron:'LINK-er',cat:'concept',
+    def:'Phase 4 of C++ development. Combines compiled object code with Standard Library code to produce the executable.',
+    example:'object.o + library.a → program.exe'},
+  {term:'Loader',name:'Loader',pron:'LOH-der',cat:'concept',
+    def:'Phase 5 of C++ development. Transfers the executable file from secondary storage into RAM for execution.',
+    example:'Disk → RAM so CPU can run the program'},
+  {term:'UML',name:'Unified Modeling Language',pron:'you-em-ELL',cat:'concept',
+    def:'Industry-standard graphical language for communicating Object-Oriented Analysis and Design results.',
+    example:'Class diagrams, sequence diagrams'},
+  {term:"Moore's Law",name:"Moore's Law",pron:'morz law',cat:'concept',
+    def:"Computer capacities approximately double every 1-2 years inexpensively. Identified by Gordon Moore (Intel co-founder).",
+    example:'RAM, CPU speed, storage all follow this trend'},
+  {term:'Runtime Error',name:'Runtime Error',pron:'RUN-time AIR-or',cat:'concept',
+    def:'Error occurring during execution, after successful compilation. Fatal ones crash the program.',
+    example:'Division by zero: int x = 5 / 0;'},
+  {term:'Logic Error',name:'Logic Error',pron:'LOJ-ik AIR-or',cat:'concept',
+    def:'Program compiles and runs but produces wrong results due to incorrect algorithm or formula.',
+    example:'Using + instead of * in a calculation'},
+  {term:'Syntax Error',name:'Syntax Error',pron:'SIN-tax AIR-or',cat:'concept',
+    def:'Violation of the grammar rules of C++. Detected by the compiler during Phase 3.',
+    example:'Missing semicolon, unclosed bracket'},
+  {term:'Object',name:'Object / Instance',pron:'OB-jekt',cat:'concept',
+    def:'A specific instance of a class. Created from a class blueprint. Has its own copy of data members.',
+    example:'If Car is class, myCar is an object'},
+  {term:'Class',name:'Class',pron:'klas',cat:'concept',
+    def:'A user-defined blueprint/template for creating objects. Contains data members and member functions.',
+    example:'class Car { int speed; void accelerate(); };'},
+  {term:'Member Function',name:'Member Function',pron:'MEM-ber FUNK-shun',cat:'concept',
+    def:'A function defined inside a class. Operates on the class\'s data members. Also called a method.',
+    example:'void Car::accelerate() { speed++; }'},
+  {term:'Polymorphism',name:'Polymorphism',pron:'pol-ee-MOR-fizm',cat:'concept',
+    def:'Ability of different objects to respond to the same message in their own way. One interface, multiple behaviors.',
+    example:'Shape::draw() works for Circle, Square differently'},
+  {term:'Machine Language',name:'Machine Language',pron:'mah-SHEEN LANG-gwij',cat:'concept',
+    def:'The only language the CPU directly understands. Consists of binary digits (0s and 1s). Machine-specific.',
+    example:'01001000 01100101 01101100 (binary)'},
+  {term:'Assembly Language',name:'Assembly Language',pron:'ah-SEM-blee LANG-gwij',cat:'concept',
+    def:'Uses English-like mnemonics (MOV, ADD, SUB) to represent machine instructions. Requires an assembler to translate.',
+    example:'MOV AX, 5   ADD AX, BX'},
+  {term:'High-Level Language',name:'High-Level Language',pron:'high-LEV-el LANG-gwij',cat:'concept',
+    def:'English-like programming languages (C++, Java, Python). One statement = many machine instructions. Requires compiler/interpreter.',
+    example:'cout << "Hello";  // simple, readable'},
+  {term:'6 Phases',name:'6 Phases of C++ Development',pron:'six FAY-zez',cat:'concept',
+    def:'Edit → Preprocess → Compile → Link → Load → Execute. Each phase transforms the program closer to running code.',
+    example:'Source code → Machine instructions → Running program'},
+  {term:'Namespace',name:'Namespace',pron:'NAYM-spays',cat:'concept',
+    def:'A named scope grouping related identifiers to avoid naming conflicts. std namespace contains all C++ Standard Library items.',
+    example:'std::cout, std::cin, std::string'},
+  {term:'Header File',name:'Header File',pron:'HED-er fyle',cat:'concept',
+    def:'A file containing declarations of functions, classes, and objects. Included via #include directive before compilation.',
+    example:'<iostream>, <string>, <vector>'},
+  {term:'Information Revolution',name:'Information Revolution',pron:'in-for-MAY-shun rev-oh-LOO-shun',cat:'concept',
+    def:'The dramatic change driven by computers, networks, and software — comparable to the Industrial Revolution in its societal impact.',
+    example:'Internet, smartphones, AI all part of this revolution'},
+];
+
+let vIdx=0,vShuffled=[],vKnew=0,vSkipped=0,vRevealed=false;
+
+function startViva(){
+  vShuffled=shuffle(VIVA);
+  vIdx=0;vKnew=0;vSkipped=0;
+  document.getElementById('vTotalCards').textContent=vShuffled.length;
+  showVivaCard();
+}
+function showVivaCard(){
+  if(vIdx>=vShuffled.length){vIdx=0;vShuffled=shuffle(VIVA)}
+  vRevealed=false;
+  const c=vShuffled[vIdx];
+  const pct=Math.round((vIdx/vShuffled.length)*100);
+  document.getElementById('vivaBar').style.width=pct+'%';
+  document.getElementById('fcChip').textContent=c.cat;
+  document.getElementById('fcTerm').textContent=c.term;
+  document.getElementById('fcPron').textContent='/'+c.pron+'/';
+  document.getElementById('fcHint').style.display='block';
+  document.getElementById('fcDef').textContent=c.def;
+  document.getElementById('fcEx').textContent=c.example||'';
+  document.getElementById('fcAnswer').classList.remove('show');
+  document.getElementById('flashcard').classList.remove('flipped','locked');
+  document.getElementById('vivaCounter').textContent=`Card ${vIdx+1} of ${vShuffled.length}`;
+  document.getElementById('vKnewNum').textContent=vKnew;
+  document.getElementById('vSkipNum').textContent=vSkipped;
+  // Reset audio button
+  const ab=document.getElementById('vAudioBtn');
+  ab.classList.remove('speaking');
+  ab.textContent='▶ Audio';
+}
+function revealViva(){
+  if(vRevealed)return;
+  vRevealed=true;
+  document.getElementById('fcAnswer').classList.add('show');
+  document.getElementById('fcHint').style.display='none';
+  document.getElementById('flashcard').classList.add('flipped','locked');
+}
+function vivaNext(knew){
+  // FIX: stop any current speech before moving to next card
+  stopSpeech();
+  if(knew)vKnew++;else vSkipped++;
+  vIdx++;
+  showVivaCard();
+}
+// FIX: Audio is ON DEMAND only — does not auto-play
+function vivaSpeak(){
+  const c=vShuffled[vIdx];
+  const ab=document.getElementById('vAudioBtn');
+  if(ab.classList.contains('speaking')){
+    stopSpeech();return;
+  }
+  ab.classList.add('speaking');
+  ab.textContent='■ Stop';
+  speak(c.name+'. '+c.def,()=>{
+    ab.classList.remove('speaking');
+    ab.textContent='▶ Audio';
+  });
+}
+
+// ══════════════════════════════════════════
+// SPEECH — on demand only, with stop capability
+// FIX: Never auto-plays. Has stop button. Clears on tab switch.
+// ══════════════════════════════════════════
+let speechActive=false;
+function speak(text,onDone){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US';u.rate=0.88;u.pitch=1;
+  const bar=document.getElementById('voiceBar');
+  const dot=document.getElementById('vbDot');
+  const term=document.getElementById('vbTerm');
+  const shortText=text.substring(0,40)+(text.length>40?'...':'');
+  if(bar)bar.classList.remove('hidden');
+  if(dot)dot.classList.add('on');
+  if(term)term.textContent=shortText;
+  speechActive=true;
+  u.onend=()=>{
+    speechActive=false;
+    if(dot)dot.classList.remove('on');
+    if(bar)bar.classList.add('hidden');
+    if(onDone)onDone();
+  };
+  u.onerror=()=>{
+    speechActive=false;
+    if(dot)dot.classList.remove('on');
+    if(bar)bar.classList.add('hidden');
+    if(onDone)onDone();
+  };
+  window.speechSynthesis.speak(u);
+}
+function stopSpeech(){
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  speechActive=false;
+  const bar=document.getElementById('voiceBar');
+  const dot=document.getElementById('vbDot');
+  if(dot)dot.classList.remove('on');
+  if(bar)bar.classList.add('hidden');
+  // reset viva audio btn if it was active
+  const ab=document.getElementById('vAudioBtn');
+  if(ab){ab.classList.remove('speaking');ab.textContent='▶ Audio'}
+}
+
+// ══════════════════════════════════════════
+// TAB NAVIGATION
+// ══════════════════════════════════════════
+function goTab(name,btn){
+  stopSpeech(); // FIX: stop speech on every tab switch
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  _initTab(name);
+}
+function goMTab(name,btn){
+  stopSpeech();
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.m-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  // Sync desktop nav
+  const tabMap={home:0,explorer:1,quiz:2,pastpaper:3,viva:4};
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab')[tabMap[name]]?.classList.add('active');
+  _initTab(name);
+}
+function _initTab(name){
+  if(name==='quiz'&&qPool.length===0)startQuiz();
+  if(name==='viva'&&vShuffled.length===0)startViva();
+  if(name==='pastpaper')renderPP('all');
+  if(name==='home')updateBestUI();
+}
+
+// ══════════════════════════════════════════
+// PARTICLES
+// ══════════════════════════════════════════
+function createParticles(){
+  const wrap=document.getElementById('particles');
+  const colors=['#8b7cf8','#00cec9','#fd79a8','#55efc4','#fdcb6e'];
+  for(let i=0;i<18;i++){
+    const p=document.createElement('div');p.className='particle';
+    const s=Math.random()*3.5+1.5;
+    p.style.cssText=`width:${s}px;height:${s}px;background:${colors[i%5]};`+
+      `left:${Math.random()*100}%;animation-duration:${(Math.random()*14+10).toFixed(1)}s;`+
+      `animation-delay:${(Math.random()*12).toFixed(1)}s`;
+    wrap.appendChild(p);
+  }
+}
+
+// INIT
+createParticles();
+buildCode();
+updateBestUI();
+</script>
+</body>
+</html>
